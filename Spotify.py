@@ -68,5 +68,7 @@ class Spotify:
 
         playlist = requests.get(url,headers=user_headers)
 
-        return playlist.json()
+        if playlist.status_code == 200:
+            return playlist.json()
+        return None
 
