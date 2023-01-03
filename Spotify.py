@@ -72,3 +72,24 @@ class Spotify:
             return playlist.json()
         return None
 
+    def get_playlist_items(self, playlist_id):
+        self.connect()
+        next_page = "https://api.spotify.com/v1/playlists/" + playlist_id + "/tracks"
+        tracks = []
+
+        while next_page:
+            user_headers = {
+                "Authorization": "Bearer " + self.token,
+                "Content-Type": "application/json"
+            }
+
+            response = requests.get(next_page,headers=user_headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                tracks.extend(response_data['items'])
+                next_page = response_data['next']
+            else:
+                return None
+
+        return tracks
+

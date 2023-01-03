@@ -1,6 +1,7 @@
 import getopt
 import sys
 
+from flask import Flask, jsonify, Response
 from dotenv import load_dotenv
 from Spotify import Spotify
 from Tidal import Tidal
@@ -8,9 +9,11 @@ from Tidal import Tidal
 load_dotenv()
 
 
-def move_playlist(playlist, name, tidal):
+def move_playlist(playlist_items, name, tidal):
     new_playlist = tidal.session.user.create_playlist(name, "Moved by script")
-    for playlist_item in playlist['tracks']['items']:
+    size = playlist_items
+    errors = 0
+    for playlist_item in playlist_items:
         found_tracks = []
         track_data = playlist_item['track']
         query = track_data['name']
@@ -26,9 +29,13 @@ def move_playlist(playlist, name, tidal):
                 new_playlist.add([found_tracks[0].id])
             else:
                 print("No sufficient match found for: " + query)
-                print("Alternative: " + found_tracks[0].name +  " by " + found_tracks[0].artist.name)
+                print("Alternative: " + found_tracks[0].name + " by " + found_tracks[0].artist.name)
+                errors += 1
         else:
             print("No match found for: " + query)
+            errors += 1
+
+    return [size, errors]
 
 
 def option_playlist(playlist_id):
@@ -36,21 +43,42 @@ def option_playlist(playlist_id):
     tidal = Tidal()
     tidal.connect()
 
-
     playlist = spotify.get_playlist(playlist_id)
+    playlist_items = spotify.get_playlist_items(playlist_id)
     if playlist:
         playlist_name = playlist["name"]
-        move_playlist(playlist, playlist_name, tidal)
+        return move_playlist(playlist_items, playlist_name, tidal)
 
+    return None
+
+
+app = Flask(__name__)
+
+
+@app.route('/copy-playlist/<playlistid>')
+def copy(playlistid):
+    moved_items = option_playlist(playlistid)
+    if moved_items and len(moved_items) == 2:
+        return jsonify({
+            'size of playlist': len(moved_items[0]),
+            'items with errors': moved_items[1],
+        })
+    return Response("{'Message': 'Error converting the file'}", status=500)
+
+
+
+@app.route('/')
+def home():
+    return jsonify({'Message': 'Welcome'})
 
 
 
 if __name__ == '__main__':
 
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         argument_list = sys.argv[1:]
         options = 'hp:'
-        long_options = ['help', 'user=','subreddit=']
+        long_options = ['help', 'user=', 'subreddit=']
         try:
             arguments, values = getopt.getopt(argument_list, options, long_options)
 
@@ -69,3 +97,6 @@ if __name__ == '__main__':
         except getopt.error as err:
             print(str(err))
 
+    else:
+        print("No Parameter, running webserver")
+        app.run(debug=True)
