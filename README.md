@@ -9,8 +9,8 @@ It works either as a command line script, when you provide the playlist id as ar
 `
 ````docker compose up -d ````
 
-Then convert the playlist with *<YOUR_IP>/copy-playlist/<playlist-id>*
-
+Then convert the playlist with *127.0.0.1/copy-playlist/PLAYLISTID*
+Replace your IP and playlistid.
 
 ## Usage as a script
 
