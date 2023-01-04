@@ -1,4 +1,5 @@
 import getopt
+import re
 import sys
 
 from flask import Flask, jsonify, Response
@@ -57,12 +58,13 @@ app = Flask(__name__)
 
 @app.route('/copy-playlist/<playlistid>')
 def copy(playlistid):
-    moved_items = option_playlist(playlistid)
-    if moved_items and len(moved_items) == 2:
-        return jsonify({
-            'size of playlist': len(moved_items[0]),
-            'items with errors': moved_items[1],
-        })
+    if len(playlistid) == 22 and len(re.findall("^[-A-Za-z0-9+/]*={0,3}$", playlistid)) > 1:
+        moved_items = option_playlist(playlistid)
+        if moved_items and len(moved_items) == 2:
+            return jsonify({
+                'size of playlist': len(moved_items[0]),
+                'items with errors': moved_items[1],
+            })
     return Response("{'Message': 'Error converting the file'}", status=500)
 
 
@@ -99,4 +101,4 @@ if __name__ == '__main__':
 
     else:
         print("No Parameter, running webserver")
-        app.run(debug=True)
+        app.run()
