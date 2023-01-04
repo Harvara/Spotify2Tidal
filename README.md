@@ -6,7 +6,7 @@ This is a tool to automaticly converts spotify playlists to your tidal account.
 It works either as a command line script, when you provide the playlist id as arg or it starts a local flask server that provides an endpoint that converts any given playlist
 
 ## Deployment Webserver
-`
+
 ````docker compose up -d ````
 
 Then convert the playlist with *127.0.0.1/copy-playlist/PLAYLISTID*
