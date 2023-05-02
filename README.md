@@ -31,3 +31,9 @@ Currently the tidal login via an existing bearer token does not work. Therefore 
 The email is send via gmail, so you need an gmail api key, which you can get here [Gmail Docs](https://developers.google.com/gmail/api/auth/about-auth)
 
 The tokens for the spotify app can be created on their [Developer Dashboard](https://developer.spotify.com/dashboard/login)
+
+## Todo
+
+-[] change endpoint that it can convert shared spotify links
+-[] build logging
+-[] send name of playlist in email

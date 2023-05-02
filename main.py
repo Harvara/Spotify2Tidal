@@ -58,7 +58,7 @@ app = Flask(__name__)
 
 @app.route('/copy-playlist/<playlistid>')
 def copy(playlistid):
-    if len(playlistid) == 22 and len(re.findall("^[-A-Za-z0-9+/]*={0,3}$", playlistid)) > 1:
+    if len(playlistid) == 22 and len(re.findall("^[-A-Za-z0-9+/]*={0,3}$", playlistid)) == 1:
         moved_items = option_playlist(playlistid)
         if moved_items and len(moved_items) == 2:
             return jsonify({
