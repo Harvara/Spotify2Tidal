@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from Spotify import Spotify
 from Tidal import Tidal
 
+SIMILARITY = 0.70
+
 load_dotenv()
 
 
@@ -26,7 +28,7 @@ def move_playlist(playlist_items, name, tidal):
             found_tracks = tidal_search_result['tracks']
 
         if len(found_tracks) > 0:
-            if found_tracks[0].peak > 0.80:
+            if found_tracks[0].peak > SIMILARITY:
                 new_playlist.add([found_tracks[0].id])
             else:
                 print("No sufficient match found for: " + query)
